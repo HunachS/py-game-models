@@ -31,8 +31,8 @@ def main() -> None:
 
         Player.objects.create(
             nickname=nickname,
-            email=player_info["email"],
-            bio=player_info["bio"],
+            email=player_info.get("email"),
+            bio=player_info.get("bio"),
             race=race,
             guild=guild
         )
