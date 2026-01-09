@@ -11,28 +11,37 @@ def main() -> None:
         guild_data = player_info.get("guild")
         guild = None
         if guild_data:
-            guild, _ = Guild.objects.get_or_create(
-                name=guild_data["name"],
-                defaults={"description": guild_data.get("description")}
-            )
+            guild_name = guild_data.get("name")
+            if guild_name:
+                guild, _ = Guild.objects.get_or_create(
+                    name=guild_name,
+                    defaults={"description": guild_data.get("description", "")}
+                )
 
         race_data = player_info.get("race")
-        race, _ = Race.objects.get_or_create(
-            name=race_data["name"],
-            defaults={"description": race_data.get("description")}
-        )
+        race = None
+        if race_data:
+            race_name = race_data.get("name")
+            if race_name:
+                race, _ = Race.objects.get_or_create(
+                    name=race_name,
+                    defaults={"description": race_data.get("description", "")}
+                )
 
-        for skill in race_data.get("skills", []):
-            Skill.objects.get_or_create(
-                name=skill["name"],
-                bonus=skill["bonus"],
-                race=race
-            )
+                for skill in race_data.get("skills", []):
+                    skill_name = skill.get("name")
+                    skill_bonus = skill.get("bonus", 0)
+                    if skill_name is not None:
+                        Skill.objects.get_or_create(
+                            name=skill_name,
+                            bonus=skill_bonus,
+                            race=race
+                        )
 
         Player.objects.create(
             nickname=nickname,
-            email=player_info.get("email"),
-            bio=player_info.get("bio"),
+            email=player_info.get("email", ""),
+            bio=player_info.get("bio", ""),
             race=race,
             guild=guild
         )
